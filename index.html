@@ -1,17 +1,59 @@
+
 <!DOCTYPE html>
-<html lang="pl">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Przekierowanie...</title>
-    <!-- Automatyczne przekierowanie po 0 sekundach -->
-    <meta http-equiv="refresh" content="0;url=login.html">
-    <script>
-        // Dodatkowe przekierowanie w JS, gdyby meta tag nie zadziałał
-        window.location.href = "gen.html";
-    </script>
+  <meta charset="UTF-8">
+  <title>Sprawdzenie Tokenu</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    .ok { color: green; font-size: 24px; }
+    .fail { color: red; font-size: 24px; }
+  </style>
 </head>
 <body>
-    <p>Przekierowywanie do strony logowania...</p>
+  <h1>Sprawdzenie tokenu</h1>
+  <div id="status">Ładowanie...</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAEK_UPXXpBLAeN3KKt5zUI5zhBhPw3lYU",
+  authDomain: "mbywatel-6b604.firebaseapp.com",
+  projectId: "mbywatel-6b604",
+  storageBucket: "mbywatel-6b604.firebasestorage.app",
+  messagingSenderId: "346214908701",
+  appId: "1:346214908701:web:26ba7ec06f4717604a57f4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const statusEl = document.getElementById("status");
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+if (!token) {
+  statusEl.innerHTML = '<span class="fail">Brak tokenu w linku!</span>';
+} else {
+  const tokenRef = ref(db, "tokens/" + token);
+  get(tokenRef).then(snapshot => {
+    if (!snapshot.exists()) {
+      statusEl.innerHTML = '<span class="fail">Token nie istnieje ❌</span>';
+    } else if (snapshot.val() === true) {
+      statusEl.innerHTML = '<span class="fail">Token już użyty ❌</span>';
+    } else {
+      set(tokenRef, true); // token ustawiony jako użyty
+      // przekierowanie
+      window.location.href = "przekierowanie.html";
+    }
+  }).catch(err => {
+    console.error(err);
+    statusEl.innerHTML = '<span class="fail">Błąd przy sprawdzaniu tokenu ❌</span>';
+  });
+}
+</script>
 </body>
 </html>
