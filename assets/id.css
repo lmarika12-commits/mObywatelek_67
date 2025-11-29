@@ -228,8 +228,8 @@ html, body {
 .version {
     opacity: 0.5;
     font-size: 14px;
-    height: max-content;
     width: max-content;   /* blok dopasowany do treści */
-    margin: 0 auto;       /* centruje cały blok w poziomie */
-    text-align: center;   /* centruje tekst w bloku */
+    margin: 0 auto;       /* wycentrowanie całego bloku na stronie */
+    display: block;       /* pewność, że to blok */
+    text-align: center;   /* dla bezpieczeństwa, jeśli tekst będzie więcej wierszy */
 }
